@@ -24,6 +24,7 @@ class AudioPlayer {
 private:
     std::weak_ptr<PlayerManagerType> manager;
     std::string source;
+    std::string holdingSource;
     std::mutex mutex;
     
     AudioPlayerState state;
@@ -42,6 +43,7 @@ public:
     void seekPosition(double percent);
     void setPlaybackRate(double rate);
     
+    const std::string& getHoldingSource() const;
     const std::string& getSource() const;
     const AudioPlayerState getState() const;
     const double getPosition() const;

@@ -64,6 +64,10 @@ AudioSource::~AudioSource()
     printDebug("[AudioSource] deleted, source = %s", source.c_str());
 }
 
+const std::string &AudioSource::getSource() const {
+    return source;
+}
+
 // MARK: - AudioSourceImpl
 
 AudioSourceImpl::AudioSourceImpl(const std::string &source, Superpowered::httpRequest *request, std::weak_ptr<PlayerManagerType> manager)
@@ -75,11 +79,10 @@ AudioSourceImpl::AudioSourceImpl(const std::string &source, Superpowered::httpRe
 {}
 
 AudioSourceImpl::~AudioSourceImpl() {
-    // TODO delete request?
+    // TODO: check delete request?
     
     if (data != NULL) {
-        // TODO is data a list of char?
-        delete [] (char *)data;
+        Superpowered::AudioInMemory::release(data);
     }
     
     printDebug("[AudioSourceImpl] deleted, source = %s", source.c_str());
@@ -99,14 +102,12 @@ void AudioSourceImpl::setState(AudioSourceState state) {
 
 void AudioSourceImpl::setData(void *value) {
     if (manager.expired()) {
-        // TODO is value a list of char?
-        delete [] (char *) value;
+        Superpowered::AudioInMemory::release(data);
         return;
     }
     
     if (data != NULL) {
-        // TODO is data a list of char?
-        delete [] (char *) data;
+        Superpowered::AudioInMemory::release(data);
     }
     
     data = value;
@@ -150,12 +151,17 @@ bool audio::requestCallback(void *clientData, Superpowered::httpRequest *request
     if (auto audioSource = (*it).second.lock()) {
         switch (response->statusCode) {
             case Superpowered::httpResponse::StatusCode_Success: {
-                char *data = new char[response->dataOrFileSizeBytes];
-                memcpy(data, response->data, response->dataOrFileSizeBytes);
+                char *dataResponse = response->data;
+                unsigned int dataSize = response->dataOrFileSizeBytes;
                 
-                void *dataDecoded = Superpowered::Decoder::decodeToAudioInMemory(data, response->dataOrFileSizeBytes);
+                printDebug("[audio::requestCallback] audio::requestCallback = %ld, dataOrFileSizeBytes = %u, source = %s", (long) dataResponse, dataSize, audioSource->getSource().c_str());
                 
-                // TODO Is data already released?
+                char *data = new char[dataSize];
+                memcpy(data, dataResponse, dataSize);
+                
+                void *dataDecoded = Superpowered::Decoder::decodeToAudioInMemory(data, dataSize);
+                
+                // TODO: check delete data?
                 
                 audioSource->setData(dataDecoded);
                 audioSource->setState(AudioSourceState_Ready);
