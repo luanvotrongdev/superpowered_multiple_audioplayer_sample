@@ -38,8 +38,6 @@ void PlayerManager::notifyStateChanged() {
                 
                 if (sourcePtr != sourceMap.end()) {
                     unusedSourceMap[(*sourcePtr).first] = false;
-                    unusedSourceMap[player->getHoldingSource()] = false;
-                    
                     player->updateState((*sourcePtr).second);
                 }
             }
