@@ -22,6 +22,11 @@
 		21144CCD232145200062D494 /* lycka.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 21144CCB232145200062D494 /* lycka.mp3 */; };
 		21144CCE232145200062D494 /* nuyorica.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 21144CCC232145200062D494 /* nuyorica.m4a */; };
 		217B9826231FF8FC002297DB /* SuperpoweredIOSAudioIO.mm in Sources */ = {isa = PBXBuildFile; fileRef = 217B9825231FF8FC002297DB /* SuperpoweredIOSAudioIO.mm */; };
+		FE8729C9266CC28D00469F5A /* AudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE8729C7266CC28D00469F5A /* AudioSource.cpp */; };
+		FE8729CC266CDA3200469F5A /* AudioPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE8729CA266CDA3200469F5A /* AudioPlayer.cpp */; };
+		FE8729D0266D187A00469F5A /* PlayerManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE8729CE266D187A00469F5A /* PlayerManager.cpp */; };
+		FE8729D3266D22C200469F5A /* Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = FE8729D2266D22C200469F5A /* Wrapper.mm */; };
+		FEA0F23B266A1F98006B02B2 /* LoopHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEA0F239266A1F98006B02B2 /* LoopHandler.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +56,20 @@
 		211F35D122806159006DE760 /* Superpowered.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Superpowered.h; path = ../../Superpowered/Superpowered.h; sourceTree = "<group>"; };
 		217B9824231FF8FC002297DB /* SuperpoweredIOSAudioIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuperpoweredIOSAudioIO.h; path = ../../Superpowered/OpenSource/SuperpoweredIOSAudioIO.h; sourceTree = "<group>"; };
 		217B9825231FF8FC002297DB /* SuperpoweredIOSAudioIO.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SuperpoweredIOSAudioIO.mm; path = ../../Superpowered/OpenSource/SuperpoweredIOSAudioIO.mm; sourceTree = "<group>"; };
+		FE8729C7266CC28D00469F5A /* AudioSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSource.cpp; sourceTree = "<group>"; };
+		FE8729C8266CC28D00469F5A /* AudioSource.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AudioSource.hpp; sourceTree = "<group>"; };
+		FE8729CA266CDA3200469F5A /* AudioPlayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioPlayer.cpp; sourceTree = "<group>"; };
+		FE8729CB266CDA3200469F5A /* AudioPlayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AudioPlayer.hpp; sourceTree = "<group>"; };
+		FE8729CD266D0F4100469F5A /* PlayerManagerType.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlayerManagerType.hpp; sourceTree = "<group>"; };
+		FE8729CE266D187A00469F5A /* PlayerManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerManager.cpp; sourceTree = "<group>"; };
+		FE8729CF266D187A00469F5A /* PlayerManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlayerManager.hpp; sourceTree = "<group>"; };
+		FE8729D1266D22C200469F5A /* Wrapper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Wrapper.hpp; sourceTree = "<group>"; };
+		FE8729D2266D22C200469F5A /* Wrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Wrapper.mm; sourceTree = "<group>"; };
+		FEA0F236266A0884006B02B2 /* SuperpoweredHTTP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuperpoweredHTTP.h; path = ../../Superpowered/SuperpoweredHTTP.h; sourceTree = "<group>"; };
+		FEA0F237266A1221006B02B2 /* SuperpoweredDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuperpoweredDecoder.h; path = ../../Superpowered/SuperpoweredDecoder.h; sourceTree = "<group>"; };
+		FEA0F239266A1F98006B02B2 /* LoopHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoopHandler.cpp; sourceTree = "<group>"; };
+		FEA0F23A266A1F98006B02B2 /* LoopHandler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LoopHandler.hpp; sourceTree = "<group>"; };
+		FEF1AA412669E7050098CB83 /* Debug.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Debug.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +94,9 @@
 		1B80C6F418E0C79600DF5B81 = {
 			isa = PBXGroup;
 			children = (
+				FE8729D1266D22C200469F5A /* Wrapper.hpp */,
+				FE8729D2266D22C200469F5A /* Wrapper.mm */,
+				FEF1AA312669DCCD0098CB83 /* Core */,
 				1B80C74818E0C85B00DF5B81 /* Superpowered */,
 				1B80C70F18E0C79600DF5B81 /* AppDelegate.h */,
 				1B80C71018E0C79600DF5B81 /* AppDelegate.m */,
@@ -111,6 +133,8 @@
 		1B80C74818E0C85B00DF5B81 /* Superpowered */ = {
 			isa = PBXGroup;
 			children = (
+				FEA0F237266A1221006B02B2 /* SuperpoweredDecoder.h */,
+				FEA0F236266A0884006B02B2 /* SuperpoweredHTTP.h */,
 				1B97253019470E69005CCEEB /* libSuperpoweredAudioIOS.a */,
 				217B9824231FF8FC002297DB /* SuperpoweredIOSAudioIO.h */,
 				217B9825231FF8FC002297DB /* SuperpoweredIOSAudioIO.mm */,
@@ -134,6 +158,23 @@
 				21144CCC232145200062D494 /* nuyorica.m4a */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FEF1AA312669DCCD0098CB83 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				FE8729CA266CDA3200469F5A /* AudioPlayer.cpp */,
+				FE8729CB266CDA3200469F5A /* AudioPlayer.hpp */,
+				FE8729C7266CC28D00469F5A /* AudioSource.cpp */,
+				FE8729C8266CC28D00469F5A /* AudioSource.hpp */,
+				FEF1AA412669E7050098CB83 /* Debug.hpp */,
+				FEA0F239266A1F98006B02B2 /* LoopHandler.cpp */,
+				FEA0F23A266A1F98006B02B2 /* LoopHandler.hpp */,
+				FE8729CE266D187A00469F5A /* PlayerManager.cpp */,
+				FE8729CF266D187A00469F5A /* PlayerManager.hpp */,
+				FE8729CD266D0F4100469F5A /* PlayerManagerType.hpp */,
+			);
+			path = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -166,7 +207,6 @@
 				ORGANIZATIONNAME = imect;
 				TargetAttributes = {
 					1B80C6FC18E0C79600DF5B81 = {
-						DevelopmentTeam = 5SJ9H3JA27;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -212,6 +252,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FEA0F23B266A1F98006B02B2 /* LoopHandler.cpp in Sources */,
+				FE8729C9266CC28D00469F5A /* AudioSource.cpp in Sources */,
+				FE8729D0266D187A00469F5A /* PlayerManager.cpp in Sources */,
+				FE8729CC266CDA3200469F5A /* AudioPlayer.cpp in Sources */,
+				FE8729D3266D22C200469F5A /* Wrapper.mm in Sources */,
 				1B80C73C18E0C81700DF5B81 /* ViewController.mm in Sources */,
 				1B80C71118E0C79600DF5B81 /* AppDelegate.m in Sources */,
 				21144CCA232144F30062D494 /* main.m in Sources */,
@@ -325,13 +370,13 @@
 		1B80C73018E0C79600DF5B81 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5SJ9H3JA27;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = SuperpoweredCrossExample/etc/Info.plist;
@@ -351,13 +396,13 @@
 		1B80C73118E0C79600DF5B81 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5SJ9H3JA27;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = SuperpoweredCrossExample/etc/Info.plist;
