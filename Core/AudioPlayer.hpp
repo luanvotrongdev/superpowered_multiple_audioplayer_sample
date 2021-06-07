@@ -24,11 +24,13 @@ class AudioPlayer {
 private:
     std::weak_ptr<PlayerManagerType> manager;
     std::shared_ptr<AudioSource> source;
-    
     std::mutex mutex;
     
     AudioPlayerState state;
     AudioPlayerState nextState;
+    
+    double initialPosition;
+    double initialPlaybackRate;
     
     Superpowered::AdvancedAudioPlayer *player;
     
@@ -43,7 +45,6 @@ public:
     void seekPosition(double percent);
     void setPlaybackRate(double rate);
     
-    const std::string& getHoldingSource() const;
     const std::string& getSource() const;
     const AudioPlayerState getState() const;
     const double getPosition() const;
