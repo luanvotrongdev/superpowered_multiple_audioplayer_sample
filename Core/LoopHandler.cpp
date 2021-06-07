@@ -61,8 +61,6 @@ void LoopHandler::start() {
     printDebug("[LoopHandler] thread started");
     
     DATA->thrd = new std::thread([this] () {
-        DATA->thrdID = std::this_thread::get_id();
-        
         while (!DATA->isClosed) {
             runAll();
             

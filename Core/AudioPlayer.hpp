@@ -23,8 +23,8 @@ enum AudioPlayerState {
 class AudioPlayer {
 private:
     std::weak_ptr<PlayerManagerType> manager;
-    std::string source;
-    std::string holdingSource;
+    std::shared_ptr<AudioSource> source;
+    
     std::mutex mutex;
     
     AudioPlayerState state;
@@ -36,7 +36,7 @@ public:
     AudioPlayer(std::weak_ptr<PlayerManagerType> manager);
     virtual ~AudioPlayer();
     
-    void loadSource(const std::string &source);
+    void setSource(std::shared_ptr<AudioSource> source);
     void play();
     void pause();
     
