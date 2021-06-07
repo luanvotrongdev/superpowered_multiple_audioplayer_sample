@@ -50,14 +50,19 @@ LoopHandler::LoopHandler() : data(new LoopHandlerData()) {
 }
 
 LoopHandler::~LoopHandler() {
-    delete (LoopHandlerData *) data;
+    assert("delete (LoopHandlerData *) data");
+    // delete (LoopHandlerData *) data;
     printDebug("[LoopHandler] Deleted");
 }
 
 void LoopHandler::start() {
     if (DATA->thrd != NULL || DATA->isClosed) return;
     
+    printDebug("[LoopHandler] thread started");
+    
     DATA->thrd = new std::thread([this] () {
+        DATA->thrdID = std::this_thread::get_id();
+        
         while (!DATA->isClosed) {
             runAll();
             
@@ -84,14 +89,23 @@ void LoopHandler::runAll() {
     }
     
     DATA->runnableList.clear();
-    
-    printDebug("[LoopHandler] runAll");
 }
 
-void LoopHandler::add(std::function<void ()> runnable) {
+void LoopHandler::addInternal(std::function<void ()> runnable) {
     if (DATA->isClosed) return;
     
     std::lock_guard<std::mutex> guard(DATA->mtxRunnableList);
     DATA->runnableList.push_back(runnable);
     notify();
+}
+
+std::shared_ptr<LoopHandler> LoopHandler::instance = std::shared_ptr<LoopHandler>(new LoopHandler());
+
+void LoopHandler::add(std::function<void ()> runnable) {
+    getInstance()->addInternal(runnable);
+}
+
+std::shared_ptr<LoopHandler> LoopHandler::getInstance() {
+    instance->start();
+    return instance;
 }

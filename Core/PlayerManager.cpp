@@ -5,17 +5,13 @@
 using namespace audio;
 
 PlayerManager::PlayerManager()
-    : looper(new LoopHandler())
-    , sourceMap()
-    , sourceMutex()
+    : sourceMap()
     , self(this)
     , playerList()
-    , playerMutex()
     , outputBuffer(NULL)
     , numberOfFrames(0)
+    , audioProcessingMutex()
 {
-    looper->start();
-    
     printDebug("[PlayerManager] Created");
 }
 
@@ -24,60 +20,79 @@ PlayerManager::~PlayerManager() {
         delete outputBuffer;
     }
     
-    delete looper; // TODO Can't Delete!!!!
-    
     printDebug("[PlayerManager] Deleted");
 }
 
 void PlayerManager::notifyStateChanged() {
-    looper->add([this] () {
-        std::lock_guard<std::mutex> guard(playerMutex);
+    LoopHandler::add([this] () {
+        std::lock_guard<std::mutex> guard(audioProcessingMutex);
+        std::map<std::string, bool> unusedSourceMap;
+        
+        for (auto it = sourceMap.begin(); it != sourceMap.end(); it++) {
+            unusedSourceMap[(*it).first] = true;
+        }
         
         for (auto it = playerList.begin(); it != playerList.end(); it++) {
             if (auto player = (*it).lock()) {
-                if (auto source = loadSource(player->getSource())) {
-                    player->updateState(source);
+                auto sourcePtr = sourceMap.find(player->getSource());
+                
+                if (sourcePtr != sourceMap.end()) {
+                    unusedSourceMap[(*sourcePtr).first] = false;
+                    unusedSourceMap[player->getHoldingSource()] = false;
+                    
+                    player->updateState((*sourcePtr).second);
                 }
+            }
+        }
+        
+        for (auto it = unusedSourceMap.begin(); it != unusedSourceMap.end(); it++) {
+            if ((*it).second) {
+                sourceMap.erase((*it).first);
             }
         }
     });
 }
 
 void PlayerManager::preloadSource(const std::string &source) {
-    std::lock_guard<std::mutex> guard(sourceMutex);
-    
-    if (sourceMap.find(source) == sourceMap.end()) {
-        auto audioSource = AudioSource::init(source, self);
-        sourceMap[source] = audioSource;
-    }
+    LoopHandler::add(std::bind([this] (const std::string &source) {
+        if (sourceMap.find(source) == sourceMap.end()) {
+            auto audioSource = AudioSource::init(source, self);
+            sourceMap[source] = audioSource;
+        }
+    }, source));
 }
 
-std::shared_ptr<AudioSource> PlayerManager::loadSource(const std::string &source) {
-    std::lock_guard<std::mutex> guard(sourceMutex);
-    
-    auto it = sourceMap.find(source);
-    
-    if (it == sourceMap.end()) {
-        auto audioSource = AudioSource::init(source, self);
-        sourceMap[source] = audioSource;
-        return audioSource;
-    } else {
-        return (*it).second;
-    }
+void PlayerManager::loadSource(const std::string &source, const std::function<void (std::shared_ptr<AudioSource>)> &callback) {
+    LoopHandler::add(std::bind([this] (const std::string &source, const std::function<void (std::shared_ptr<AudioSource>)> &callback) {
+        
+        auto it = sourceMap.find(source);
+        
+        if (it == sourceMap.end()) {
+            auto audioSource = AudioSource::init(source, self);
+            sourceMap[source] = audioSource;
+            callback(audioSource);
+        } else {
+            callback((*it).second);
+        }
+        
+    }, source, callback));
 }
 
-std::shared_ptr<AudioPlayer> PlayerManager::createPlayer() {
-    std::lock_guard<std::mutex> guard(playerMutex);
-    
-    auto player = std::make_shared<AudioPlayer>(self);
-    
-    playerList.push_back(player);
-    
-    return player;
+void PlayerManager::createPlayer(const std::function<void (std::shared_ptr<AudioPlayer>)> &callback) {
+    LoopHandler::add(std::bind([this] (const std::function<void (std::shared_ptr<AudioPlayer>)> &callback) {
+        std::lock_guard<std::mutex> guard(audioProcessingMutex);
+        
+        auto player = std::make_shared<AudioPlayer>(self);
+        
+        playerList.push_back(player);
+        
+        callback(player);
+        
+    }, callback));
 }
 
 bool PlayerManager::audioProcessing(float *leftOutput, float *rightOutput, unsigned int numberOfFrames, unsigned int samplerate) {
-    std::lock_guard<std::mutex> guard(playerMutex);
+    std::lock_guard<std::mutex> guard(audioProcessingMutex);
     
     bool hasSound = false;
     bool mix = false;

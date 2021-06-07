@@ -2,6 +2,7 @@
 #define LoopHandler_hpp
 
 #include <functional>
+#include <memory>
 
 namespace audio {
 
@@ -9,15 +10,20 @@ namespace audio {
     private:
         void *data;
         
+        void start();
         void notify();
         void runAll();
+        void addInternal(std::function<void ()> runnable);
+        
+        LoopHandler();
+        
+        static std::shared_ptr<LoopHandler> instance;
         
     public:
-        LoopHandler();
-        virtual ~LoopHandler();
+        static std::shared_ptr<LoopHandler> getInstance();
+        static void add(std::function<void ()> runnable);
         
-        void start();
-        void add(std::function<void ()> runnable);
+        virtual ~LoopHandler();
     };
 
 }

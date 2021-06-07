@@ -28,6 +28,8 @@ public:
     virtual ~AudioSource();
     virtual AudioSourceState getState() = 0;
     virtual void* getData() = 0;
+    
+    const std::string &getSource() const;
 };
 
 }

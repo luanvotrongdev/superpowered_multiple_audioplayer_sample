@@ -15,14 +15,10 @@ namespace audio {
 
 class PlayerManager : public PlayerManagerType {
 private:
-    LoopHandler *looper;
     std::shared_ptr<PlayerManagerType> self;
-    
     std::map<std::string, std::shared_ptr<AudioSource>> sourceMap;
-    std::mutex sourceMutex;
-    
     std::vector<std::weak_ptr<AudioPlayer>> playerList;
-    std::mutex playerMutex;
+    std::mutex audioProcessingMutex;
     
     float *outputBuffer;
     int numberOfFrames;
@@ -34,9 +30,9 @@ public:
     void notifyStateChanged();
     
     void preloadSource(const std::string &source);
-    std::shared_ptr<AudioSource> loadSource(const std::string &source);
+    void loadSource(const std::string &source, const std::function<void (std::shared_ptr<AudioSource>)> &callback);
     
-    std::shared_ptr<AudioPlayer> createPlayer();
+    void createPlayer(const std::function<void (std::shared_ptr<AudioPlayer>)> &callback);
     
     bool audioProcessing(float *leftOutput, float *rightOutput, unsigned int numberOfFrames, unsigned int samplerate);
 };

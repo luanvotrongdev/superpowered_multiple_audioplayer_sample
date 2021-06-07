@@ -6,6 +6,7 @@ using namespace audio;
 AudioPlayer::AudioPlayer(std::weak_ptr<PlayerManagerType> manager)
     : manager(manager)
     , source("")
+    , holdingSource("")
     , state(AudioPlayerState_Initial)
     , nextState(AudioPlayerState_Initial)
     , mutex()
@@ -70,6 +71,10 @@ const std::string& AudioPlayer::getSource() const {
     return source;
 }
 
+const std::string& AudioPlayer::getHoldingSource() const {
+    return holdingSource;
+}
+
 const AudioPlayerState AudioPlayer::getState() const {
     return state;
 }
@@ -102,6 +107,7 @@ void AudioPlayer::updateState(const std::shared_ptr<AudioSource> source) {
             case AudioSourceState_Ready: {
                 printDebug("[AudioPlayer] state = AudioPlayerState_Ready");
                 state = AudioPlayerState_Ready;
+                holdingSource = source->getSource();
                 player->openMemory(source->getData());
                 break;
             }

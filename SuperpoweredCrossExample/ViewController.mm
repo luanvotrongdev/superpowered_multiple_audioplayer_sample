@@ -23,11 +23,8 @@
                              false, // enableCryptographics (using Superpowered::RSAPublicKey, Superpowered::RSAPrivateKey, Superpowered::hasher or Superpowered::AES)
                              true  // enableNetworking (using Superpowered::httpRequest)
                              );
-    NSString* strTemplate = @"https://data.chiasenhac.com/down2/2174/1/2173432-3007e91c/flac/Butter%20Hotter%20Remix_%20-%20BTS.flac";
-    
+
     audioPlayer = [[AudioPlayer alloc] init];
-    [audioPlayer loadSource:strTemplate];
-    [audioPlayer play];
 }
 
 - (void)dealloc {
@@ -39,16 +36,59 @@
 - (void)interruptionEnded {
 }
 
+static int number = 0;
+
 - (IBAction)onPlayPause:(id)sender {
-    // Test playback rate
-    // [audioPlayer setPlaybackRate:3];
-    
-    // Test multi player
-    NSString* strTemplate = @"https://data.chiasenhac.com/down2/2174/1/2173432-3007e91c/flac/Butter%20Hotter%20Remix_%20-%20BTS.flac";
-    
-    audioPlayer2 = [[AudioPlayer alloc] init];
-    [audioPlayer2 loadSource:strTemplate];
-    [audioPlayer2 play];
+    if (number == 0) {
+        number++;
+        
+        NSString* strTemplate = @"https://data.chiasenhac.com/down2/2174/1/2173432-3007e91c/flac/Butter%20Hotter%20Remix_%20-%20BTS.flac";
+        
+        [audioPlayer loadSource:strTemplate];
+        [audioPlayer play];
+    }
+    else if (number == 1) {
+        number++;
+        
+        NSString *temp = @"https://data25.chiasenhac.com/stream2/2175/1/2174506-0b096b06/flac/Doi%20La%20Cat%20Bui%20La%20Ta%20Cover_%20-%20DIMZ.flac";
+        
+        [audioPlayer loadSource:temp];
+    }
+    else if (number == 2) {
+        number++;
+        
+        NSString *temp = @"https://data25.chiasenhac.com/stream2/2175/1/2174591-5f2e27bb/flac/Toa%20Sang%20Viet%20Nam%20-%20Miu%20Le_%20GDucky_%20Bui.flac";
+        
+        [audioPlayer loadSource:temp];
+    }
+    else if (number == 3) {
+        number++;
+        
+        NSString* strTemplate = @"https://data.chiasenhac.com/down2/2174/1/2173432-3007e91c/flac/Butter%20Hotter%20Remix_%20-%20BTS.flac";
+        
+        [audioPlayer loadSource:strTemplate];
+        [audioPlayer setPlaybackRate:2];
+    }
+    else if (number == 4) {
+        number++;
+        [audioPlayer setPlaybackRate:1];
+    }
+    else if (number == 5) {
+        number++;
+        NSString* strTemplate = @"https://data25.chiasenhac.com/stream2/2175/1/2174506-0b096b06/flac/Doi%20La%20Cat%20Bui%20La%20Ta%20Cover_%20-%20DIMZ.flac";
+        
+        audioPlayer2 = [[AudioPlayer alloc] init];
+        [audioPlayer2 loadSource:strTemplate];
+        [audioPlayer2 play];
+    }
+    else if (number == 6) {
+        number++;
+        audioPlayer2 = nil;
+    }
+    else if (number == 7) {
+        number++;
+        [audioPlayer seekPosition:0];
+    }
 }
 
 @end
