@@ -5,7 +5,7 @@ using namespace audio;
 
 AudioPlayer::AudioPlayer(std::weak_ptr<PlayerManagerType> manager)
     : manager(manager)
-    , source("")
+    , source()
     , state(AudioPlayerState_Initial)
     , nextState(AudioPlayerState_Initial)
     , mutex()
@@ -24,13 +24,13 @@ AudioPlayer::~AudioPlayer() {
     printDebug("[AudioPlayer] Deleted");
 }
 
-void AudioPlayer::loadSource(const std::string &source) {
+void AudioPlayer::setSource(std::shared_ptr<AudioSource> source) {
     if (this->source == source) return;
     
     if (auto m = manager.lock()) {
         std::lock_guard<std::mutex> guard(mutex);
         
-        printDebug("[AudioPlayer] loadSource: %s", source.c_str());
+        printDebug("[AudioPlayer] loadSource: %s", source->getSource().c_str());
         
         if (this->player) {
             delete this->player;
@@ -40,7 +40,6 @@ void AudioPlayer::loadSource(const std::string &source) {
         this->source = source;
         this->state = AudioPlayerState_Initial;
         
-        m->preloadSource(source);
         m->notifyStateChanged();
     }
 }
@@ -83,10 +82,6 @@ void AudioPlayer::setPlaybackRate(double rate) {
     }
 }
 
-const std::string& AudioPlayer::getSource() const {
-    return source;
-}
-
 const AudioPlayerState AudioPlayer::getState() const {
     return state;
 }
@@ -107,7 +102,7 @@ const double AudioPlayer::getPlaybackRate() const {
     }
 }
 
-void AudioPlayer::updateState(const std::shared_ptr<AudioSource> source) {
+void AudioPlayer::updateState() {
     std::lock_guard<std::mutex> guard(mutex);
     
     if (state == AudioPlayerState_Initial || state == AudioPlayerState_Buffering || state == AudioPlayerState_Error) {

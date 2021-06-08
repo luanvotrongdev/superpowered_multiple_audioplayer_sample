@@ -25,33 +25,15 @@ PlayerManager::~PlayerManager() {
 }
 
 void PlayerManager::notifyStateChanged() {
-    /*
     LoopHandler::add([this] () {
         std::lock_guard<std::mutex> guard(audioProcessingMutex);
-        std::map<std::string, bool> unusedSourceMap;
-        
-        for (auto it = sourceMap.begin(); it != sourceMap.end(); it++) {
-            unusedSourceMap[(*it).first] = true;
-        }
         
         for (auto it = playerList.begin(); it != playerList.end(); it++) {
             if (auto player = (*it).lock()) {
-                auto sourcePtr = sourceMap.find(player->getSource());
-                
-                if (sourcePtr != sourceMap.end()) {
-                    unusedSourceMap[(*sourcePtr).first] = false;
-                    player->updateState((*sourcePtr).second);
-                }
-            }
-        }
-        
-        for (auto it = unusedSourceMap.begin(); it != unusedSourceMap.end(); it++) {
-            if ((*it).second) {
-                sourceMap.erase((*it).first);
+                player->updateState();
             }
         }
     });
-    */
 }
 
 std::shared_ptr<AudioSource> PlayerManager::loadSource(const std::string &source) {

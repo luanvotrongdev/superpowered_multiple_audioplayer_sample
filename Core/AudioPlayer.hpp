@@ -39,18 +39,19 @@ public:
     virtual ~AudioPlayer();
     
     void setSource(std::shared_ptr<AudioSource> source);
+    
     void play();
     void pause();
     
     void seekPosition(double percent);
     void setPlaybackRate(double rate);
     
-    const std::string& getSource() const;
-    const AudioPlayerState getState() const;
     const double getPosition() const;
     const double getPlaybackRate() const;
     
-    void updateState(const std::shared_ptr<AudioSource> source);
+    const AudioPlayerState getState() const;
+    void updateState();
+    
     bool audioProcessing(float *leftOutput, float *rightOutput, unsigned int numberOfFrames, unsigned int samplerate, bool mix, float *outputBuffer);
 };
 
