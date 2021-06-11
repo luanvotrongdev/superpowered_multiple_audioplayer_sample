@@ -140,17 +140,17 @@ void audio::cleanAudioSource() {
 }
 
 bool audio::requestCallback(void *clientData, Superpowered::httpRequest *request, Superpowered::httpResponse *response) {
-    auto index = (long) clientData;
-    auto it = audioSourceMap.find(index);
-    
-    if (it == audioSourceMap.end()) {
-        printDebug("[audio::requestCallback] index = %ld, not found", index);
-        return false;
-    }
-    
-    if (auto audioSource = (*it).second.lock()) {
-        switch (response->statusCode) {
-            case Superpowered::httpResponse::StatusCode_Success: {
+    switch (response->statusCode) {
+        case Superpowered::httpResponse::StatusCode_Success: {
+            auto index = (long) clientData;
+            auto it = audioSourceMap.find(index);
+            
+            if (it == audioSourceMap.end()) {
+                printDebug("[audio::requestCallback] index = %ld, not found", index);
+                return false;
+            }
+            
+            if (auto audioSource = (*it).second.lock()) {
                 char *dataResponse = response->data;
                 unsigned int dataSize = response->dataOrFileSizeBytes;
                 
@@ -167,23 +167,28 @@ bool audio::requestCallback(void *clientData, Superpowered::httpRequest *request
                 audioSource->setState(AudioSourceState_Ready);
                 
                 cleanAudioSource();
-                return false;
             }
-                
-            case Superpowered::httpResponse::StatusCode_Progress: {
-                return true;
-            }
-                
-            default: {
-                audioSource->setState(AudioSourceState_Error);
-                
-                cleanAudioSource();
-                return false;
-            }
+            return false;
         }
-    } else {
-        printDebug("[audio::requestCallback] index = %ld, audioSource is Deleted", index);
-        cleanAudioSource();
-        return false;
+            
+        case Superpowered::httpResponse::StatusCode_Progress: {
+            return true;
+        }
+            
+        default: {
+            auto index = (long) clientData;
+            auto it = audioSourceMap.find(index);
+            
+            if (it == audioSourceMap.end()) {
+                printDebug("[audio::requestCallback] index = %ld, not found", index);
+                return false;
+            }
+            
+            if (auto audioSource = (*it).second.lock()) {
+                audioSource->setState(AudioSourceState_Error);
+                cleanAudioSource();
+            }
+            return false;
+        }
     }
 }

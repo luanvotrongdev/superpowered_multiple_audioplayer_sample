@@ -5,34 +5,41 @@ using namespace audio;
 
 AudioPlayer::AudioPlayer(std::weak_ptr<PlayerManagerType> manager)
     : manager(manager)
-    , source("")
-    , holdingSource("")
+    , source()
     , state(AudioPlayerState_Initial)
     , nextState(AudioPlayerState_Initial)
     , mutex()
-    , player(new Superpowered::AdvancedAudioPlayer(44100, 0))
+    , player(NULL)
+    , initialPosition(0)
+    , initialPlaybackRate(1)
 {
     printDebug("[AudioPlayer] Created");
 }
 
 AudioPlayer::~AudioPlayer() {
-    delete player;
+    if (this->player) {
+        delete this->player;
+    }
     
     printDebug("[AudioPlayer] Deleted");
 }
 
-void AudioPlayer::loadSource(const std::string &source) {
+void AudioPlayer::setSource(std::shared_ptr<AudioSource> source) {
     if (this->source == source) return;
     
     if (auto m = manager.lock()) {
         std::lock_guard<std::mutex> guard(mutex);
         
-        printDebug("[AudioPlayer] loadSource: %s", source.c_str());
+        printDebug("[AudioPlayer] loadSource: %s", source->getSource().c_str());
+        
+        if (this->player) {
+            delete this->player;
+            this->player = NULL;
+        }
         
         this->source = source;
         this->state = AudioPlayerState_Initial;
         
-        m->preloadSource(source);
         m->notifyStateChanged();
     }
 }
@@ -60,19 +67,19 @@ void AudioPlayer::pause() {
 }
 
 void AudioPlayer::seekPosition(double percent) {
-    player->seek(percent);
+    initialPosition = percent;
+    
+    if (player != NULL) {
+        player->seek(percent);
+    }
 }
 
 void AudioPlayer::setPlaybackRate(double rate) {
-    player->playbackRate = rate;
-}
-
-const std::string& AudioPlayer::getSource() const {
-    return source;
-}
-
-const std::string& AudioPlayer::getHoldingSource() const {
-    return holdingSource;
+    initialPlaybackRate = rate;
+    
+    if (player != NULL) {
+        player->playbackRate = rate;
+    }
 }
 
 const AudioPlayerState AudioPlayer::getState() const {
@@ -80,14 +87,22 @@ const AudioPlayerState AudioPlayer::getState() const {
 }
 
 const double AudioPlayer::getPosition() const {
-    return player->getDisplayPositionPercent();
+    if (player != NULL) {
+        return player->getDisplayPositionPercent();
+    } else {
+        return initialPosition;
+    }
 }
 
 const double AudioPlayer::getPlaybackRate() const {
-    return player->playbackRate;
+    if (player != NULL) {
+        return player->playbackRate;
+    } else {
+        return initialPlaybackRate;
+    }
 }
 
-void AudioPlayer::updateState(const std::shared_ptr<AudioSource> source) {
+void AudioPlayer::updateState() {
     std::lock_guard<std::mutex> guard(mutex);
     
     if (state == AudioPlayerState_Initial || state == AudioPlayerState_Buffering || state == AudioPlayerState_Error) {
@@ -107,7 +122,7 @@ void AudioPlayer::updateState(const std::shared_ptr<AudioSource> source) {
             case AudioSourceState_Ready: {
                 printDebug("[AudioPlayer] state = AudioPlayerState_Ready");
                 state = AudioPlayerState_Ready;
-                holdingSource = source->getSource();
+                player = new Superpowered::AdvancedAudioPlayer(44100, 0);
                 player->openMemory(source->getData());
                 break;
             }
@@ -123,6 +138,8 @@ void AudioPlayer::updateState(const std::shared_ptr<AudioSource> source) {
                     player->togglePlayback();
                 } else {
                     player->play();
+                    player->seek(initialPosition);
+                    player->playbackRate = initialPlaybackRate;
                 }
                 
                 printDebug("[AudioPlayer] state = AudioPlayerState_Playing");

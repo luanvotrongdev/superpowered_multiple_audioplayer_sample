@@ -49,10 +49,6 @@ static bool audioProcessing(void *clientdata, float **inputBuffers, unsigned int
 
 @implementation AudioPlayer {
     std::shared_ptr<audio::AudioPlayer> player;
-    BOOL initialPlaying;
-    double initialPosition;
-    double initialPlaybackRate;
-    NSString *source;
 }
 
 - (instancetype) init
@@ -61,100 +57,45 @@ static bool audioProcessing(void *clientdata, float **inputBuffers, unsigned int
     
     if (self) {
         [PlayerManager sharedInstance];
-        
-        self->initialPosition = 0;
-        self->initialPlaybackRate = 1;
-        
-        typedef int (*Callback)(id, SEL, std::shared_ptr<audio::AudioPlayer>);
-        
-        SEL callbackSEL = @selector(setPlayer:);
-        Callback callback = (Callback) [self methodForSelector:callbackSEL];
-        
-        audioManager.createPlayer(std::bind(callback, self, callbackSEL, std::placeholders::_1));
+        self->player = audioManager.createPlayer();
     }
     
     return self;
 }
 
-- (void) setPlayer: (std::shared_ptr<audio::AudioPlayer>) player
-{
-    self->player = player;
-    
-    // TODO: Improve HERE, below code can't run in this thread?????
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
-        if (self->source != nil) {
-            self->player->loadSource([self->source UTF8String]);
-        }
-        if (self->initialPlaying) {
-            self->player->play();
-        }
-        
-        self->player->seekPosition(self->initialPosition);
-        self->player->setPlaybackRate(self->initialPlaybackRate);
-    });
-}
-
 - (void) loadSource: (NSString *) source
 {
-    self->source = source;
-    
-    if (player) {
-        player->loadSource([source UTF8String]);
-    }
+    player->setSource(audioManager.loadSource([source UTF8String]));
 }
 
 - (void) play
 {
-    initialPlaying = TRUE;
-    
-    if (player) {
-        player->play();
-    }
+    player->play();
 }
 
 - (void) pause
 {
-    initialPlaying = FALSE;
-    
-    if (player) {
-        player->pause();
-    }
+    player->pause();
 }
 
 - (void) seekPosition: (double) percent
 {
-    initialPosition = percent;
-    
-    if (player) {
-        player->seekPosition(percent);
-    }
+    player->seekPosition(percent);
 }
 
 - (void) setPlaybackRate: (double) rate
 {
-    initialPlaybackRate = rate;
-    
-    if (player) {
-        player->setPlaybackRate(rate);
-    }
+    player->setPlaybackRate(rate);
 }
 
 - (double) getPosition
 {
-    if (player) {
-        return player->getPosition();
-    } else {
-        return initialPosition;
-    }
+    return player->getPosition();
 }
 
 - (double) getPlaybackRate
 {
-    if (player) {
-        return player->getPlaybackRate();
-    } else {
-        return initialPlaybackRate;
-    }
+    return player->getPlaybackRate();
 }
 
 @end
